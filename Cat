@@ -1,0 +1,96 @@
+index.html<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cat Jump Game</title>
+<style>
+body {
+  margin: 0;
+  background: #ddd;
+  text-align: center;
+}
+#game {
+  width: 100%;
+  height: 200px;
+  background: white;
+  border-bottom: 2px solid black;
+  position: relative;
+  overflow: hidden;
+}
+#cat {
+  width: 40px;
+  height: 40px;
+  background: orange;
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+}
+#block {
+  width: 20px;
+  height: 40px;
+  background: black;
+  position: absolute;
+  bottom: 0;
+  right: -20px;
+}
+</style>
+</head>
+<body>
+
+<h3>🐱 Cat Jump Game</h3>
+<div id="game">
+  <div id="cat"></div>
+  <div id="block"></div>
+</div>
+<p>Score: <span id="score">0</span> | High: <span id="high">0</span></p>
+
+<script>
+let cat = document.getElementById("cat");
+let block = document.getElementById("block");
+let scoreEl = document.getElementById("score");
+let highEl = document.getElementById("high");
+
+let jumping = false;
+let score = 0;
+let high = localStorage.getItem("high") || 0;
+highEl.innerText = high;
+
+function jump() {
+  if (jumping) return;
+  jumping = true;
+  cat.style.bottom = "80px";
+  setTimeout(() => {
+    cat.style.bottom = "0px";
+    jumping = false;
+  }, 400);
+}
+
+document.body.addEventListener("touchstart", jump);
+
+setInterval(() => {
+  let blockLeft = block.offsetLeft;
+  block.style.left = blockLeft - 5 + "px";
+
+  if (blockLeft < -20) {
+    block.style.left = "100%";
+    score++;
+    scoreEl.innerText = score;
+    if (score > high) {
+      high = score;
+      localStorage.setItem("high", high);
+      highEl.innerText = high;
+    }
+  }
+
+  let catBottom = parseInt(window.getComputedStyle(cat).getPropertyValue("bottom"));
+  if (blockLeft < 40 && blockLeft > 0 && catBottom < 40) {
+    alert("Game Over!");
+    score = 0;
+    scoreEl.innerText = 0;
+    block.style.left = "100%";
+  }
+}, 30);
+</script>
+
+</body>
+</html>
